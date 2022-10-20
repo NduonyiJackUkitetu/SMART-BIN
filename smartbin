@@ -1,0 +1,86 @@
+#include <Servo.h>
+
+Servo myservo;
+int pos = 0;
+double distance;
+double distance2;
+const int TRIG_PIN = 3;
+const int TRIG_PIN2 = 6;
+const int ECHO_PIN = 2;
+const int ECHO_PIN2 = 5;
+double duration;
+double duration2;
+double sometime;
+double sometime2;
+
+const int BLED = 11;
+const int GLED = 12;
+const int RLED = 13;
+int ledMode = 0;
+void setup() {
+myservo.attach(9);
+pinMode(TRIG_PIN, OUTPUT);
+pinMode(TRIG_PIN2, OUTPUT);
+pinMode(ECHO_PIN, INPUT);
+pinMode(ECHO_PIN2, INPUT);
+
+pinMode(BLED, OUTPUT);
+pinMode(GLED, OUTPUT);
+pinMode(RLED, OUTPUT);
+Serial.begin(9600);
+}
+
+void loop() {
+digitalWrite(TRIG_PIN, LOW);
+delayMicroseconds(2);
+digitalWrite(TRIG_PIN, HIGH);
+delayMicroseconds(10);
+duration = pulseIn(ECHO_PIN, HIGH);
+distance = duration * 0.034 / 2;
+
+if ((distance < 60.0)){
+sometime++;
+// Serial.print(sometime);
+if(sometime > 180){
+for (pos = 0; pos <= 140; pos += 1) {
+myservo.write(pos);
+delay(15);
+sometime = 0;
+}
+delay(5000);
+for (pos = 140; pos >= 0; pos -= 1) {
+myservo.write(pos);
+delay(15);
+}
+}
+}
+
+digitalWrite(TRIG_PIN2, LOW);
+delayMicroseconds(2);
+digitalWrite(TRIG_PIN2, HIGH);
+delayMicroseconds(10);
+duration2 = pulseIn(ECHO_PIN2, HIGH);
+distance2 = duration2 * 0.034 / 2;
+
+//Serial.print(distance2);
+//Serial.print();
+// delay(2000);
+Serial.print(distance2);
+Serial.print(" ");
+
+if(distance2 <= 3.8){
+sometime2++;
+if(sometime2 > 80){
+analogWrite(BLED, 0);
+analogWrite(GLED, 0);
+analogWrite(RLED, 255);
+delay(15);
+}
+}
+else{
+analogWrite(BLED, 0);
+analogWrite(GLED, 255);
+analogWrite(RLED, 0);
+delay(15);
+}
+}
